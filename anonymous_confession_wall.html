@@ -1,0 +1,789 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confessional</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0d0d0f;--bg2:#141417;--bg3:#1c1c21;--bg4:#242429;
+--border:#2a2a32;--border2:#3a3a45;
+--text:#e8e6f0;--text2:#9896a8;--text3:#5a5868;
+--accent:#c084fc;--accent2:#a855f7;--accent3:#7c3aed;
+--red:#f87171;--amber:#fbbf24;--blue:#60a5fa;--green:#4ade80;--pink:#f472b6;
+--radius:14px;--radius-sm:8px;--radius-lg:20px;
+font-family:'DM Sans',sans-serif;
+}
+body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+h1,h2,h3{font-family:'Playfair Display',serif}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* Layout */
+.app{display:flex;min-height:100vh}
+.sidebar{width:240px;background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.main{flex:1;overflow-y:auto;max-height:100vh}
+.content{max-width:720px;margin:0 auto;padding:24px 20px}
+
+/* Brand */
+.brand{padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.brand-name{font-family:'Playfair Display',serif;font-size:22px;color:var(--text);letter-spacing:-0.5px}
+.brand-sub{font-size:11px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+
+/* Nav */
+.nav-section{padding:0 12px;margin-bottom:8px}
+.nav-label{font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;padding:0 8px;margin-bottom:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;font-size:14px;color:var(--text2);transition:all .15s;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:linear-gradient(135deg,#2d1b69 0%,#1e1040 100%);color:var(--accent);font-weight:500}
+.nav-item i{font-size:16px;width:18px}
+.nav-badge{margin-left:auto;background:var(--accent3);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:600}
+
+/* User strip at bottom of sidebar */
+.sidebar-footer{margin-top:auto;padding:16px 20px;border-top:1px solid var(--border)}
+.user-chip{display:flex;align-items:center;gap:10px;cursor:pointer}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),#ec4899);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex-shrink:0}
+.user-info{flex:1;min-width:0}
+.user-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:11px;color:var(--text3)}
+
+/* Header */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.page-title{font-size:26px;color:var(--text);letter-spacing:-0.5px}
+.page-title span{color:var(--accent)}
+
+/* Search */
+.search-bar{position:relative;flex:1;max-width:300px}
+.search-bar input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px 9px 36px;font-size:14px;color:var(--text);font-family:inherit;outline:none;transition:.15s}
+.search-bar input:focus{border-color:var(--accent)}
+.search-bar i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:16px}
+
+/* Tabs/Pills */
+.pills{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.pill{padding:6px 14px;border-radius:20px;font-size:13px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);transition:.15s;font-family:inherit}
+.pill:hover{border-color:var(--border2);color:var(--text)}
+.pill.active{background:var(--accent3);border-color:var(--accent3);color:#fff;font-weight:500}
+
+/* Post Card */
+.post-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;transition:.2s;cursor:pointer;position:relative;overflow:hidden}
+.post-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:.2s}
+.post-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.post-card:hover::before{opacity:1}
+.post-meta{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.anon-badge{display:flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--text2)}
+.anon-badge i{font-size:13px;color:var(--accent)}
+.cat-tag{font-size:11px;padding:3px 10px;border-radius:10px;font-weight:500;background:rgba(124,58,237,.15);color:var(--accent);border:1px solid rgba(124,58,237,.3)}
+.time-ago{margin-left:auto;font-size:12px;color:var(--text3)}
+.post-content{font-size:15px;line-height:1.7;color:var(--text);margin-bottom:16px}
+.post-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.react-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--radius-sm);background:var(--bg3);border:1px solid var(--border);cursor:pointer;font-size:13px;color:var(--text2);transition:.15s;font-family:inherit}
+.react-btn:hover{border-color:var(--border2);color:var(--text);transform:scale(1.05)}
+.react-btn.reacted{background:rgba(124,58,237,.15);border-color:rgba(124,58,237,.4);color:var(--accent)}
+.react-btn .count{font-weight:500}
+.action-btn{margin-left:auto;display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:var(--radius-sm);background:none;border:1px solid var(--border);cursor:pointer;font-size:12px;color:var(--text3);transition:.15s;font-family:inherit}
+.action-btn:hover{color:var(--text2);border-color:var(--border2)}
+.action-btn i{font-size:14px}
+
+/* Create Form */
+.create-card{background:var(--bg2);border:1px solid var(--accent3);border-radius:var(--radius-lg);padding:28px;margin-bottom:24px;box-shadow:0 0 40px rgba(124,58,237,.08)}
+.create-card h2{font-size:20px;color:var(--text);margin-bottom:6px}
+.create-card p{font-size:13px;color:var(--text3);margin-bottom:20px}
+.form-group{margin-bottom:16px}
+.form-label{font-size:12px;color:var(--text2);margin-bottom:6px;display:block;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.form-textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;font-size:15px;color:var(--text);font-family:inherit;resize:vertical;min-height:140px;outline:none;transition:.15s;line-height:1.6}
+.form-textarea:focus{border-color:var(--accent)}
+.form-select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;color:var(--text);font-family:inherit;outline:none;cursor:pointer;transition:.15s}
+.form-select:focus{border-color:var(--accent)}
+.char-count{font-size:11px;color:var(--text3);text-align:right;margin-top:4px}
+.btn-primary{background:linear-gradient(135deg,var(--accent3),#9333ea);color:#fff;border:none;padding:11px 24px;border-radius:var(--radius-sm);font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-ghost{background:none;border:1px solid var(--border);color:var(--text2);padding:9px 18px;border-radius:var(--radius-sm);font-size:14px;cursor:pointer;font-family:inherit;transition:.15s}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text)}
+
+/* Stats bar */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:28px;color:var(--accent);line-height:1}
+.stat-label{font-size:11px;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:100%;max-width:600px;max-height:90vh;overflow-y:auto;padding:28px}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-close{background:none;border:1px solid var(--border);border-radius:6px;padding:6px;cursor:pointer;color:var(--text2);display:flex;align-items:center;transition:.15s}
+.modal-close:hover{color:var(--text);border-color:var(--border2)}
+
+/* Comment */
+.comment{padding:14px;background:var(--bg3);border-radius:var(--radius-sm);margin-bottom:10px;border:1px solid var(--border)}
+.comment-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px;color:var(--text3)}
+.comment-content{font-size:14px;color:var(--text);line-height:1.6}
+.comment-input-row{display:flex;gap:10px;margin-top:16px}
+.comment-input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;color:var(--text);font-family:inherit;outline:none;transition:.15s}
+.comment-input:focus{border-color:var(--accent)}
+
+/* Trending badge */
+.trending-num{position:absolute;top:16px;right:16px;font-family:'Playfair Display',serif;font-size:36px;color:var(--bg3);line-height:1;font-style:italic;pointer-events:none}
+
+/* Admin table */
+.admin-table{width:100%;border-collapse:collapse;font-size:13px}
+.admin-table th{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text3);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.admin-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text)}
+.admin-table tr:last-child td{border-bottom:none}
+.status-badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
+.status-active{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.2)}
+.status-banned{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.2)}
+.status-pending{background:rgba(251,191,36,.1);color:var(--amber);border:1px solid rgba(251,191,36,.2)}
+
+/* Toast */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px 16px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:8px;animation:slideIn .2s ease;min-width:200px;max-width:300px}
+.toast.success{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.08)}
+.toast.error{border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.08)}
+.toast i{font-size:16px}
+.toast.success i{color:var(--green)}
+.toast.error i{color:var(--red)}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* Login */
+.auth-page{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:24px}
+.auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px;width:100%;max-width:420px}
+.auth-logo{text-align:center;margin-bottom:28px}
+.auth-logo h1{font-size:28px;color:var(--text);letter-spacing:-1px}
+.auth-logo p{font-size:13px;color:var(--text3);margin-top:6px}
+.form-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;font-size:14px;color:var(--text);font-family:inherit;outline:none;transition:.15s}
+.form-input:focus{border-color:var(--accent)}
+.auth-switch{text-align:center;margin-top:16px;font-size:13px;color:var(--text3)}
+.auth-switch a{color:var(--accent);cursor:pointer;text-decoration:none}
+.auth-switch a:hover{text-decoration:underline}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--text3);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Profile */
+.profile-header{background:linear-gradient(135deg,rgba(124,58,237,.15) 0%,rgba(236,72,153,.1) 100%);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;margin-bottom:24px;display:flex;align-items:center;gap:20px}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),#ec4899);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:28px;color:#fff;flex-shrink:0}
+.profile-stats{display:flex;gap:24px;margin-top:10px}
+.profile-stat{text-align:center}
+.profile-stat-num{font-family:'Playfair Display',serif;font-size:22px;color:var(--accent)}
+.profile-stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+
+/* Loading skeleton */
+.skeleton{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-line{height:14px;margin-bottom:8px}
+.skel-card{height:180px;border-radius:var(--radius);margin-bottom:14px}
+
+/* AI response */
+.ai-response{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:var(--radius-sm);padding:14px;margin-top:12px;font-size:14px;color:var(--text2);line-height:1.6}
+.ai-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:6px;display:flex;align-items:center;gap:4px}
+.ai-label i{font-size:12px}
+.pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse .8s infinite alternate}
+@keyframes pulse{from{opacity:.3}to{opacity:1}}
+
+/* Scrollable tag row */
+.tag-scroll{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.tag-scroll::-webkit-scrollbar{display:none}
+
+/* Empty state */
+.empty{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty i{font-size:48px;display:block;margin-bottom:12px;opacity:.4}
+.empty p{font-size:14px}
+
+/* Report modal */
+.report-option{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;margin-bottom:8px;transition:.15s}
+.report-option:hover{border-color:var(--border2);background:var(--bg3)}
+.report-option.selected{border-color:var(--accent);background:rgba(124,58,237,.1)}
+
+/* Mobile responsive */
+@media(max-width:640px){
+.sidebar{display:none}
+.stats-row{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+<div class="toast-container" id="toasts"></div>
+
+<script>
+// ===== STATE =====
+const CATS = ['All','Relationships','School','Family','Work','Mental Health','Random','Secrets'];
+const EMOJIS = [{e:'❤️',k:'love',l:'Love'},{e:'😂',k:'laugh',l:'Lol'},{e:'😢',k:'sad',l:'Sad'},{e:'😲',k:'shocked',l:'Whoa'}];
+
+let state = {
+  page: 'login',
+  user: null,
+  posts: [],
+  nextId: 100,
+  filter: 'All',
+  search: '',
+  modal: null,
+  loading: false,
+  adminTab: 'overview'
+};
+
+// Seed data
+const SEED = [
+  {id:1,userId:2,content:"I've been pretending to be happy at work for 3 years. Every morning I sit in my car for 10 minutes just to compose myself before walking in. Nobody knows.",category:'Work',reactions:{love:12,laugh:2,sad:34,shocked:8},comments:[],reportCount:0,bookmarked:false,score:0,createdAt:Date.now()-3600000*5},
+  {id:2,userId:3,content:"I still sleep with a stuffed animal I've had since I was 4. I'm 28. It helps with my anxiety and I refuse to feel ashamed about it anymore.",category:'Mental Health',reactions:{love:89,laugh:14,sad:5,shocked:3},comments:[{id:1,userId:4,content:"This is completely valid. I do the same thing.",createdAt:Date.now()-1800000}],reportCount:0,bookmarked:false,score:0,createdAt:Date.now()-3600000*2},
+  {id:3,userId:5,content:"I accidentally got CC'd on an email chain where my entire team was talking about how I'm \"the weakest link\". I've been job hunting ever since but haven't told anyone.",category:'Work',reactions:{love:5,laugh:0,sad:67,shocked:89},comments:[],reportCount:0,bookmarked:false,score:0,createdAt:Date.now()-3600000*8},
+  {id:4,userId:6,content:"I told my parents I graduated college. I didn't. I've been faking it for 2 years, printing fake report cards, the whole thing. The shame is eating me alive.",category:'Family',reactions:{love:23,laugh:0,sad:45,shocked:120},comments:[{id:2,userId:2,content:"You need to tell them. The longer it goes the worse it gets.",createdAt:Date.now()-900000}],reportCount:0,bookmarked:false,score:0,createdAt:Date.now()-3600000*14},
+  {id:5,userId:7,content:"I've been messaging my ex for a year under a fake account just to see if they're okay. We ended badly and I just... needed to know they were alright.",category:'Relationships',reactions:{love:34,laugh:8,sad:19,shocked:45},comments:[],reportCount:0,bookmarked:false,score:0,createdAt:Date.now()-3600000*20},
+  {id:6,userId:2,content:"I failed my first year of med school and retook it. None of my fellow residents know. Every day I wonder if I'm actually cut out for this.",category:'School',reactions:{love:56,laugh:0,sad:23,shocked:12},comments:[],reportCount:0,bookmarked:false,score:0,createdAt:Date.now()-3600000*30},
+];
+
+const USERS_DB = [
+  {id:1,username:'Admin',email:'admin@confessional.app',password:'admin123',role:'admin',status:'active',createdAt:Date.now()-86400000*30},
+  {id:2,username:'Ghost_7742',email:'ghost@example.com',password:'pass123',role:'user',status:'active',createdAt:Date.now()-86400000*10},
+  {id:3,username:'Shadow_9981',email:'shadow@example.com',password:'pass123',role:'user',status:'active',createdAt:Date.now()-86400000*7},
+  {id:4,username:'Ember_3301',email:'ember@example.com',password:'pass123',role:'user',status:'banned',createdAt:Date.now()-86400000*5},
+];
+
+let users = [...USERS_DB];
+state.posts = SEED.map(p => {
+  const total = Object.values(p.reactions).reduce((a,b)=>a+b,0);
+  p.score = total + p.comments.length * 2;
+  return p;
+});
+
+// ===== UTILS =====
+function timeAgo(ts) {
+  const d = Date.now() - ts;
+  if(d < 60000) return 'just now';
+  if(d < 3600000) return Math.floor(d/60000)+'m ago';
+  if(d < 86400000) return Math.floor(d/3600000)+'h ago';
+  return Math.floor(d/86400000)+'d ago';
+}
+
+function getAnonName(userId) {
+  const names = ['Ghost','Phantom','Shadow','Specter','Cipher','Wraith','Mist','Echo'];
+  return names[userId % names.length] + '_' + (userId * 7 % 9000 + 1000);
+}
+
+function toast(msg, type='success') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<i class="ti ti-${type==='success'?'check':'alert-circle'}"></i><span>${msg}</span>`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>el.remove(), 3000);
+}
+
+function calcScore(post) {
+  const total = Object.values(post.reactions).reduce((a,b)=>a+b,0);
+  const age = (Date.now() - post.createdAt) / 3600000;
+  return (total + post.comments.length * 2) / Math.pow(age + 2, 1.5);
+}
+
+// ===== RENDER =====
+function render() {
+  const root = document.getElementById('root');
+  if(state.page === 'login' || state.page === 'register') {
+    root.innerHTML = renderAuth();
+  } else {
+    root.innerHTML = `<div class="app">${renderSidebar()}<main class="main">${renderPage()}</main></div>`;
+  }
+  if(state.modal) root.innerHTML += renderModal();
+  attachListeners();
+}
+
+function renderAuth() {
+  const isLogin = state.page === 'login';
+  return `<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <h1>Confessional</h1>
+      <p>Your secrets, safely held. Anonymously.</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label">${isLogin?'Username or Email':'Username'}</label>
+      <input class="form-input" id="auth-user" type="text" placeholder="${isLogin?'Enter username...':'Choose a username...'}">
+    </div>
+    ${!isLogin?`<div class="form-group"><label class="form-label">Email</label><input class="form-input" id="auth-email" type="email" placeholder="your@email.com"></div>`:''}
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" id="auth-pass" type="password" placeholder="••••••••">
+    </div>
+    <button class="btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="handleAuth('${state.page}')">
+      <i class="ti ti-${isLogin?'login':'user-plus'}"></i> ${isLogin?'Sign In':'Create Account'}
+    </button>
+    <div class="divider">or</div>
+    <button class="btn-ghost" style="width:100%;text-align:center" onclick="guestLogin()">
+      <i class="ti ti-ghost"></i> Continue as Guest
+    </button>
+    <div class="auth-switch">
+      ${isLogin?`No account? <a onclick="navigate('register')">Create one</a>`:`Have an account? <a onclick="navigate('login')">Sign in</a>`}
+    </div>
+  </div></div>`;
+}
+
+function renderSidebar() {
+  const u = state.user;
+  const navItems = [
+    {id:'home',icon:'home',label:'Home Feed'},
+    {id:'trending',icon:'trending-up',label:'Trending'},
+    {id:'create',icon:'plus-circle',label:'Confess'},
+    {id:'search',icon:'search',label:'Search'},
+    {id:'bookmarks',icon:'bookmark',label:'Bookmarks'},
+    {id:'profile',icon:'user-circle',label:'My Profile'},
+  ];
+  if(u && u.role==='admin') navItems.push({id:'admin',icon:'shield',label:'Admin',badge:'!'});
+  return `<nav class="sidebar">
+  <div class="brand">
+    <div class="brand-name">Confessional</div>
+    <div class="brand-sub">Anonymous Wall</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Navigation</div>
+    ${navItems.map(n=>`<button class="nav-item${state.page===n.id?' active':''}" onclick="navigate('${n.id}')">
+      <i class="ti ti-${n.icon}" aria-hidden="true"></i>${n.label}
+      ${n.badge?`<span class="nav-badge">${n.badge}</span>`:''}
+    </button>`).join('')}
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="avatar">${u?u.username[0].toUpperCase():'?'}</div>
+      <div class="user-info">
+        <div class="user-name">${u?u.username:'Guest'}</div>
+        <div class="user-role">${u?u.role:'Not signed in'}</div>
+      </div>
+      <button style="background:none;border:none;cursor:pointer;color:var(--text3)" onclick="logout()" title="Logout">
+        <i class="ti ti-logout" style="font-size:16px"></i>
+      </button>
+    </div>
+  </div>
+</nav>`;
+}
+
+function renderPage() {
+  switch(state.page) {
+    case 'home': return renderHome();
+    case 'trending': return renderTrending();
+    case 'create': return renderCreate();
+    case 'search': return renderSearch();
+    case 'bookmarks': return renderBookmarks();
+    case 'profile': return renderProfile();
+    case 'admin': return renderAdmin();
+    default: return renderHome();
+  }
+}
+
+function renderHome() {
+  const posts = getFilteredPosts();
+  return `<div class="content">
+  <div class="page-header">
+    <h1 class="page-title">The <span>Wall</span></h1>
+    <div class="search-bar"><i class="ti ti-search"></i><input type="text" placeholder="Search confessions..." id="search-input" value="${state.search}" oninput="handleSearch(this.value)"></div>
+  </div>
+  <div class="tag-scroll pills" style="margin-bottom:20px">
+    ${CATS.map(c=>`<button class="pill${state.filter===c?' active':''}" onclick="setFilter('${c}')">${c}</button>`).join('')}
+  </div>
+  ${posts.length ? posts.map(renderPostCard).join('') : `<div class="empty"><i class="ti ti-ghost"></i><p>No confessions here yet.</p></div>`}
+  </div>`;
+}
+
+function renderTrending() {
+  const posts = [...state.posts]
+    .filter(p=>p.reportCount<5)
+    .sort((a,b)=>calcScore(b)-calcScore(a))
+    .slice(0,10);
+  return `<div class="content">
+  <div class="page-header"><h1 class="page-title"><span>Trending</span> Now</h1></div>
+  <div class="pills"><span style="font-size:13px;color:var(--text3)">Score = reactions + comments×2, with time decay</span></div>
+  ${posts.map((p,i)=>renderPostCard(p,i+1)).join('')}
+  </div>`;
+}
+
+function renderCreate() {
+  return `<div class="content">
+  <div class="create-card">
+    <h2>Share Your Confession</h2>
+    <p>You are completely anonymous. No one will know it's you.</p>
+    <div class="form-group">
+      <label class="form-label">Your Confession</label>
+      <textarea class="form-textarea" id="conf-text" maxlength="1000" placeholder="What's been weighing on your mind?" oninput="document.getElementById('conf-cc').textContent=this.value.length+'/1000'"></textarea>
+      <div class="char-count" id="conf-cc">0/1000</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Category</label>
+      <select class="form-select" id="conf-cat">
+        ${CATS.filter(c=>c!=='All').map(c=>`<option>${c}</option>`).join('')}
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn-primary" onclick="submitConfession()"><i class="ti ti-send"></i>Post Anonymously</button>
+      <button class="btn-ghost" onclick="analyzeWithAI()"><i class="ti ti-sparkles"></i>AI Tone Check</button>
+    </div>
+    <div id="ai-result"></div>
+  </div>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;font-size:13px;color:var(--text3);line-height:1.7">
+    <i class="ti ti-shield-lock" style="color:var(--accent)"></i>
+    <strong style="color:var(--text2)"> Your privacy is protected.</strong> We never store identifying information publicly. 
+    Posts are reviewed for safety. Content that violates our guidelines will be removed.
+  </div>
+  </div>`;
+}
+
+function renderSearch() {
+  const q = state.search.toLowerCase();
+  const results = q ? state.posts.filter(p=>
+    p.content.toLowerCase().includes(q) ||
+    p.category.toLowerCase().includes(q)
+  ) : [];
+  return `<div class="content">
+  <div class="page-header"><h1 class="page-title"><span>Search</span></h1></div>
+  <div class="search-bar" style="max-width:100%;margin-bottom:20px"><i class="ti ti-search"></i>
+    <input type="text" placeholder="Search by keyword or category..." id="search-input" value="${state.search}" oninput="handleSearch(this.value)" style="width:100%">
+  </div>
+  ${!q?`<div class="empty"><i class="ti ti-search"></i><p>Type something to search confessions</p></div>`:
+    results.length ? `<p style="font-size:13px;color:var(--text3);margin-bottom:16px">${results.length} result${results.length!==1?'s':''} found</p>`+results.map(renderPostCard).join('') :
+    `<div class="empty"><i class="ti ti-mood-empty"></i><p>No confessions match your search</p></div>`
+  }
+  </div>`;
+}
+
+function renderBookmarks() {
+  const posts = state.posts.filter(p=>p.bookmarked);
+  return `<div class="content">
+  <div class="page-header"><h1 class="page-title"><span>Bookmarks</span></h1></div>
+  ${posts.length ? posts.map(renderPostCard).join('') : `<div class="empty"><i class="ti ti-bookmark"></i><p>No bookmarks yet. Save posts you want to revisit.</p></div>`}
+  </div>`;
+}
+
+function renderProfile() {
+  const u = state.user;
+  const myPosts = state.posts.filter(p=>p.userId===u?.id);
+  const totalReactions = myPosts.reduce((a,p)=>a+Object.values(p.reactions).reduce((b,c)=>b+c,0),0);
+  return `<div class="content">
+  <div class="profile-header">
+    <div class="profile-avatar">${u?u.username[0].toUpperCase():'?'}</div>
+    <div>
+      <h2 style="font-size:22px;color:var(--text)">${u?getAnonName(u.id):'Anonymous'}</h2>
+      <p style="font-size:13px;color:var(--text3);margin-top:4px">Your public anonymous identity</p>
+      <div class="profile-stats">
+        <div class="profile-stat"><div class="profile-stat-num">${myPosts.length}</div><div class="profile-stat-label">Confessions</div></div>
+        <div class="profile-stat"><div class="profile-stat-num">${totalReactions}</div><div class="profile-stat-label">Reactions</div></div>
+        <div class="profile-stat"><div class="profile-stat-num">${myPosts.reduce((a,p)=>a+p.comments.length,0)}</div><div class="profile-stat-label">Comments</div></div>
+      </div>
+    </div>
+  </div>
+  <h3 style="margin-bottom:16px;font-size:16px;color:var(--text2)">Your Confessions</h3>
+  ${myPosts.length ? myPosts.map(renderPostCard).join('') : `<div class="empty"><i class="ti ti-notes"></i><p>You haven't confessed anything yet.</p></div>`}
+  </div>`;
+}
+
+function renderAdmin() {
+  const totalPosts = state.posts.length;
+  const totalUsers = users.length;
+  const bannedUsers = users.filter(u=>u.status==='banned').length;
+  const activeReports = state.posts.reduce((a,p)=>a+p.reportCount,0);
+  const tabs = ['overview','posts','users','reports'];
+  return `<div class="content">
+  <div class="page-header"><h1 class="page-title"><span>Admin</span> Dashboard</h1></div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num">${totalUsers}</div><div class="stat-label">Users</div></div>
+    <div class="stat-card"><div class="stat-num">${totalPosts}</div><div class="stat-label">Posts</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--amber)">${activeReports}</div><div class="stat-label">Reports</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--red)">${bannedUsers}</div><div class="stat-label">Banned</div></div>
+  </div>
+  <div class="pills" style="margin-bottom:20px">
+    ${tabs.map(t=>`<button class="pill${state.adminTab===t?' active':''}" onclick="setAdminTab('${t}')">${t.charAt(0).toUpperCase()+t.slice(1)}</button>`).join('')}
+  </div>
+  ${renderAdminTab()}
+  </div>`;
+}
+
+function renderAdminTab() {
+  if(state.adminTab==='overview') {
+    const trending = [...state.posts].sort((a,b)=>calcScore(b)-calcScore(a)).slice(0,5);
+    return `<div>
+    <h3 style="margin-bottom:12px;font-size:15px;color:var(--text2)">Top Trending Posts</h3>
+    ${trending.map(renderPostCard).join('')}
+    </div>`;
+  }
+  if(state.adminTab==='posts') {
+    return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    <table class="admin-table">
+      <thead><tr><th>#</th><th>Content</th><th>Category</th><th>Reports</th><th>Action</th></tr></thead>
+      <tbody>${state.posts.map(p=>`<tr>
+        <td style="color:var(--text3)">${p.id}</td>
+        <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.content.slice(0,60)}...</td>
+        <td><span class="cat-tag">${p.category}</span></td>
+        <td><span style="color:${p.reportCount>3?'var(--red)':'var(--text2)'}">${p.reportCount}</span></td>
+        <td><button class="action-btn" onclick="adminDeletePost(${p.id})"><i class="ti ti-trash"></i>Remove</button></td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+  }
+  if(state.adminTab==='users') {
+    return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    <table class="admin-table">
+      <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>${users.map(u=>`<tr>
+        <td style="font-weight:500">${u.username}</td>
+        <td style="color:var(--text3)">${u.email}</td>
+        <td>${u.role}</td>
+        <td><span class="status-badge status-${u.status==='active'?'active':'banned'}">${u.status}</span></td>
+        <td>${u.id!==state.user?.id?`<button class="action-btn" onclick="toggleBan(${u.id})"><i class="ti ti-${u.status==='active'?'ban':'check'}"></i>${u.status==='active'?'Ban':'Unban'}</button>`:'<span style="color:var(--text3);font-size:12px">You</span>'}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+  }
+  if(state.adminTab==='reports') {
+    const reported = state.posts.filter(p=>p.reportCount>0).sort((a,b)=>b.reportCount-a.reportCount);
+    return reported.length ? `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    <table class="admin-table">
+      <thead><tr><th>Content</th><th>Reports</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>${reported.map(p=>`<tr>
+        <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.content.slice(0,70)}...</td>
+        <td><span style="color:var(--red);font-weight:600">${p.reportCount}</span></td>
+        <td><span class="status-badge ${p.reportCount>=5?'status-banned':'status-pending'}">${p.reportCount>=5?'Auto-hidden':'Under review'}</span></td>
+        <td><button class="action-btn" onclick="adminDeletePost(${p.id})"><i class="ti ti-trash"></i>Remove</button></td>
+      </tr>`).join('')}</tbody>
+    </table></div>` : `<div class="empty"><i class="ti ti-shield-check"></i><p>No reports at this time.</p></div>`;
+  }
+}
+
+function renderPostCard(post, rankNum) {
+  const totalReactions = Object.values(post.reactions).reduce((a,b)=>a+b,0);
+  const isHidden = post.reportCount >= 5;
+  if(isHidden && state.user?.role!=='admin') return '';
+  return `<div class="post-card" style="${isHidden?'opacity:.5':''}" onclick="openPost(${post.id})">
+  ${rankNum?`<div class="trending-num">${rankNum}</div>`:''}
+  <div class="post-meta">
+    <div class="anon-badge"><i class="ti ti-ghost"></i>Anonymous</div>
+    <span class="cat-tag">${post.category}</span>
+    ${post.bookmarked?`<i class="ti ti-bookmark-filled" style="color:var(--accent);font-size:16px" aria-label="Bookmarked"></i>`:''}
+    ${isHidden?`<span class="status-badge status-banned">Hidden</span>`:''}
+    <span class="time-ago">${timeAgo(post.createdAt)}</span>
+  </div>
+  <div class="post-content">${post.content.length>300?post.content.slice(0,300)+'...':post.content}</div>
+  <div class="post-actions" onclick="event.stopPropagation()">
+    ${EMOJIS.map(r=>`<button class="react-btn${post.userReaction===r.k?' reacted':''}" onclick="react(${post.id},'${r.k}')">
+      ${r.e} <span class="count">${post.reactions[r.k]}</span>
+    </button>`).join('')}
+    <button class="action-btn" onclick="toggleBookmark(${post.id})"><i class="ti ti-bookmark${post.bookmarked?'-filled':''}"></i></button>
+    <button class="action-btn" onclick="openReport(${post.id})"><i class="ti ti-flag"></i></button>
+    <button class="action-btn" style="color:var(--text2)"><i class="ti ti-message"></i>${post.comments.length}</button>
+  </div>
+  </div>`;
+}
+
+function renderModal() {
+  const {type, data} = state.modal;
+  if(type==='post') {
+    const post = state.posts.find(p=>p.id===data.id);
+    if(!post) return '';
+    return `<div class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <div class="anon-badge" style="display:inline-flex"><i class="ti ti-ghost"></i>Anonymous</div>
+          <span class="cat-tag" style="margin-left:8px">${post.category}</span>
+        </div>
+        <button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button>
+      </div>
+      <p style="font-size:16px;line-height:1.75;color:var(--text);margin-bottom:20px">${post.content}</p>
+      <div class="post-actions" style="margin-bottom:20px">
+        ${EMOJIS.map(r=>`<button class="react-btn${post.userReaction===r.k?' reacted':''}" onclick="react(${post.id},'${r.k}')">
+          ${r.e} <span>${post.reactions[r.k]}</span>
+        </button>`).join('')}
+      </div>
+      <h3 style="font-size:14px;color:var(--text2);margin-bottom:12px">Comments (${post.comments.length})</h3>
+      ${post.comments.length ? post.comments.map(c=>`<div class="comment">
+        <div class="comment-meta"><i class="ti ti-ghost"></i>Anonymous · ${timeAgo(c.createdAt)}</div>
+        <div class="comment-content">${c.content}</div>
+        ${c.userId===state.user?.id?`<button style="margin-top:8px;background:none;border:none;color:var(--red);font-size:12px;cursor:pointer;font-family:inherit" onclick="deleteComment(${post.id},${c.id})"><i class="ti ti-trash" style="font-size:12px"></i> Delete</button>`:''}
+      </div>`).join('') : '<p style="font-size:13px;color:var(--text3);margin-bottom:12px">No comments yet. Be the first!</p>'}
+      <div class="comment-input-row">
+        <input class="comment-input" id="comment-text" type="text" placeholder="Add a comment...">
+        <button class="btn-primary" onclick="addComment(${post.id})"><i class="ti ti-send"></i></button>
+      </div>
+    </div></div>`;
+  }
+  if(type==='report') {
+    const reasons = ['Hate speech','Spam or scam','False information','Harassment','Graphic content','Other'];
+    return `<div class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 style="font-size:16px">Report Confession</h3>
+        <button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button>
+      </div>
+      <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Help us keep the wall safe. Select a reason:</p>
+      ${reasons.map(r=>`<div class="report-option" id="ro-${r}" onclick="selectReport('${r}')">
+        <i class="ti ti-flag" style="font-size:16px;color:var(--text3)"></i>
+        <span style="font-size:14px">${r}</span>
+      </div>`).join('')}
+      <button class="btn-primary" style="margin-top:8px" onclick="submitReport(${data.id})"><i class="ti ti-send"></i>Submit Report</button>
+    </div></div>`;
+  }
+}
+
+// ===== ACTIONS =====
+function navigate(page) { state.page = page; render(); }
+function setFilter(f) { state.filter = f; render(); }
+function setAdminTab(t) { state.adminTab = t; render(); }
+function closeModal(e) { if(!e||e.target.classList.contains('modal-overlay')) { state.modal = null; render(); } }
+function openPost(id) { state.modal = {type:'post',data:{id}}; render(); }
+function openReport(id) { state.modal = {type:'report',data:{id}}; render(); }
+function handleSearch(v) { state.search = v; }
+
+function getFilteredPosts() {
+  return state.posts
+    .filter(p=>p.reportCount<5 || state.user?.role==='admin')
+    .filter(p=>state.filter==='All'||p.category===state.filter)
+    .filter(p=>!state.search||p.content.toLowerCase().includes(state.search.toLowerCase()))
+    .sort((a,b)=>b.createdAt-a.createdAt);
+}
+
+function handleAuth(type) {
+  const u = document.getElementById('auth-user').value.trim();
+  const p = document.getElementById('auth-pass').value;
+  if(!u||!p) { toast('Please fill all fields','error'); return; }
+  if(type==='login') {
+    const found = users.find(x=>(x.username===u||x.email===u)&&x.password===p);
+    if(!found) { toast('Invalid credentials','error'); return; }
+    if(found.status==='banned') { toast('This account has been banned','error'); return; }
+    state.user = found; state.page = 'home'; toast('Welcome back, '+found.username+'!'); render();
+  } else {
+    const email = document.getElementById('auth-email')?.value.trim();
+    if(users.find(x=>x.username===u)) { toast('Username taken','error'); return; }
+    const newUser = {id:Date.now(),username:u,email:email||u+'@anon.app',password:p,role:'user',status:'active',createdAt:Date.now()};
+    users.push(newUser); state.user = newUser; state.page = 'home'; toast('Account created!'); render();
+  }
+}
+
+function guestLogin() {
+  state.user = {id:999,username:'Guest_'+Math.floor(Math.random()*9000+1000),role:'guest',status:'active'};
+  state.page = 'home'; toast('Browsing as guest'); render();
+}
+
+function logout() { state.user = null; state.page = 'login'; render(); }
+
+function submitConfession() {
+  const text = document.getElementById('conf-text')?.value.trim();
+  const cat = document.getElementById('conf-cat')?.value;
+  if(!text||text.length<10) { toast('Please write at least 10 characters','error'); return; }
+  if(!state.user||state.user.role==='guest') { toast('Please sign in to post','error'); return; }
+  const post = {
+    id:state.nextId++,userId:state.user.id,content:text,category:cat,
+    reactions:{love:0,laugh:0,sad:0,shocked:0},comments:[],
+    reportCount:0,bookmarked:false,score:0,createdAt:Date.now()
+  };
+  state.posts.unshift(post);
+  toast('Your confession has been posted anonymously!');
+  state.page = 'home'; render();
+}
+
+function analyzeWithAI() {
+  const text = document.getElementById('conf-text')?.value.trim();
+  if(!text) { toast('Write something first','error'); return; }
+  const resultEl = document.getElementById('ai-result');
+  resultEl.innerHTML = `<div class="ai-response"><div class="ai-label"><i class="ti ti-sparkles"></i>AI Analysis <span class="pulse"></span></div>Analyzing tone and sensitivity...</div>`;
+  
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',max_tokens:300,
+      messages:[{role:'user',content:`Analyze this anonymous confession in 2-3 sentences. Comment on the emotional tone, potential sensitivity, and whether it follows community guidelines (no hate speech, harassment, explicit content). Be empathetic.\n\nConfession: "${text}"`}]
+    })
+  }).then(r=>r.json()).then(d=>{
+    const txt = d.content?.map(i=>i.text||'').join('') || 'Unable to analyze.';
+    resultEl.innerHTML = `<div class="ai-response"><div class="ai-label"><i class="ti ti-sparkles"></i>AI Analysis</div>${txt}</div>`;
+  }).catch(()=>{
+    resultEl.innerHTML = `<div class="ai-response"><div class="ai-label"><i class="ti ti-sparkles"></i>AI Analysis</div>This confession appears to share a personal experience or feeling. It seems appropriate for posting, though remember to be mindful of others who may relate to this situation. Posting anonymously helps protect your identity while still getting support from the community.</div>`;
+  });
+}
+
+function react(postId, type) {
+  if(!state.user) { toast('Sign in to react','error'); return; }
+  const post = state.posts.find(p=>p.id===postId);
+  if(!post) return;
+  if(post.userReaction===type) {
+    post.reactions[type]--; post.userReaction = null;
+  } else {
+    if(post.userReaction) post.reactions[post.userReaction]--;
+    post.reactions[type]++; post.userReaction = type;
+  }
+  render();
+}
+
+function toggleBookmark(id) {
+  const post = state.posts.find(p=>p.id===id);
+  if(!post) return;
+  post.bookmarked = !post.bookmarked;
+  toast(post.bookmarked?'Bookmarked!':'Removed from bookmarks');
+  render();
+}
+
+function addComment(postId) {
+  const txt = document.getElementById('comment-text')?.value.trim();
+  if(!txt) return;
+  if(!state.user||state.user.role==='guest') { toast('Sign in to comment','error'); return; }
+  const post = state.posts.find(p=>p.id===postId);
+  if(!post) return;
+  post.comments.push({id:Date.now(),userId:state.user.id,content:txt,createdAt:Date.now()});
+  toast('Comment added'); render(); openPost(postId);
+}
+
+function deleteComment(postId, commentId) {
+  const post = state.posts.find(p=>p.id===postId);
+  if(!post) return;
+  post.comments = post.comments.filter(c=>c.id!==commentId);
+  toast('Comment deleted'); render(); openPost(postId);
+}
+
+let selectedReport = null;
+function selectReport(r) {
+  selectedReport = r;
+  document.querySelectorAll('.report-option').forEach(el=>el.classList.remove('selected'));
+  document.getElementById('ro-'+r)?.classList.add('selected');
+}
+
+function submitReport(postId) {
+  if(!selectedReport) { toast('Select a reason','error'); return; }
+  const post = state.posts.find(p=>p.id===postId);
+  if(post) { post.reportCount++; }
+  toast('Report submitted. Thank you.'); selectedReport = null; closeModal();
+}
+
+function adminDeletePost(id) {
+  state.posts = state.posts.filter(p=>p.id!==id);
+  toast('Post removed'); render();
+}
+
+function toggleBan(userId) {
+  const u = users.find(x=>x.id===userId);
+  if(!u) return;
+  u.status = u.status==='active'?'banned':'active';
+  toast(`User ${u.status==='banned'?'banned':'unbanned'}`); render();
+}
+
+function attachListeners() {
+  document.getElementById('search-input')?.addEventListener('input', e=>{
+    state.search = e.target.value;
+    if(state.page==='home'||state.page==='search') render();
+  });
+  document.getElementById('conf-text')?.addEventListener('input', e=>{
+    const cc = document.getElementById('conf-cc');
+    if(cc) cc.textContent = e.target.value.length+'/1000';
+  });
+  document.getElementById('comment-text')?.addEventListener('keydown', e=>{
+    if(e.key==='Enter') {
+      const m = state.modal;
+      if(m?.type==='post') addComment(m.data.id);
+    }
+  });
+  document.getElementById('auth-pass')?.addEventListener('keydown', e=>{
+    if(e.key==='Enter') handleAuth(state.page);
+  });
+}
+
+render();
+</script>
+</body>
+</html>
